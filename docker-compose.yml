@@ -1,0 +1,28 @@
+version: '3.8'
+
+services:
+  db:
+    image: mysql:8.0
+    container_name: mysql_db
+    restart: always
+    environment:
+      MYSQL_DATABASE: myapp
+      MYSQL_USER: user
+      MYSQL_PASSWORD: password
+      MYSQL_ROOT_PASSWORD: rootpassword
+    ports:
+      - '3308:3306'
+    volumes:
+      - db_data:/var/lib/mysql
+  app:
+    build: .
+    command: yarn start:dev
+    restart: always
+    ports:
+      - '3000:3000'
+    environment:
+      DATABASE_URL: mysql://user:password@db:3306/myapp?schema=public
+    depends_on:
+      - db
+volumes:
+  db_data:
